@@ -1,0 +1,14 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "Learning NodeJS ExpressJS And MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Sagar Kumar",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
