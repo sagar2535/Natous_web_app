@@ -16,14 +16,14 @@ mongoose
     useNewUrlParser: true,
   })
   .then((con) => {
-    console.log(con.connection.name);
+    console.log(`Database Name : ${con.connection.name}`);
     console.log(`Connected to MongoDB successfully`);
   })
   .catch((err) => console.log(err));
 
 const port = process.env.PORT || 3000;
 
-console.log(process.env.NODE_ENV);
+console.log(`Node Enviornment is : ${process.env.NODE_ENV}`);
 
 app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
