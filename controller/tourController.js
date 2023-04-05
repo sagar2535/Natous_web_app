@@ -2,24 +2,49 @@
 const Tour = require('../model/tourModel');
 
 exports.getAllTours = async (req, res) => {
-  const tours = await Tour.find();
-  res.status(200).json({
-    status: 'success',
-    result: tours.length,
-    data: {
-      tours,
-    },
-  });
+  try {
+    const queryObj = { ...req.query };
+    const exculdedFields = ['page', 'sort', 'limit', 'fields'];
+    exculdedFields.forEach((el) => delete queryObj[el]);
+
+    let queryStr = JSON.stringify(queryObj);
+
+    queryStr = queryStr.replace(/\b(gte|gt|lt|lte)\b/, (match) => `$${match}`);
+
+    const query = Tour.find(JSON.parse(queryStr));
+
+    const tours = await query;
+
+    res.status(200).json({
+      status: 'success',
+      result: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      error: err.message,
+    });
+  }
 };
 
 exports.getTour = async (req, res) => {
-  const tour = await Tour.findById(req.params.id);
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
+  try {
+    const tour = await Tour.findById(req.params.id);
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      error: err.message,
+    });
+  }
 };
 
 exports.createTour = async (req, res) => {

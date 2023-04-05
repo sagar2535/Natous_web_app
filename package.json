@@ -4,8 +4,8 @@
   "description": "Learning NodeJS ExpressJS And MongoDB",
   "main": "app.js",
   "scripts": {
-    "start:dev": "NODE_ENV=development nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon server.js"
+    "start": "NODE_ENV=development nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon sersaver.js"
   },
   "author": "Sagar Kumar",
   "license": "MIT",
