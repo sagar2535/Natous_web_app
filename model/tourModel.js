@@ -58,6 +58,10 @@ const tourShchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -86,6 +90,22 @@ tourShchema.pre('save', function (next) {
 //   next();
 // });
 
+// QUERY MIDDLEWARE
+
+// tourShchema.pre('find', function (next) {
+/*This Regular Expression works for all the methods with Starts with like : find ,
+  findOne, findByIdAndDelete and findMyIdAndUpdate */
+
+tourShchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+tourShchema.post(/^find/, function (doc, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+  console.log(doc);
+  next();
+});
 const Tour = mongoose.model('Tour', tourShchema);
 
 module.exports = Tour;
