@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "NODE_ENV=development nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon sersaver.js"
+    "start:prod": "NODE_ENV=production nodemon sersaver.js",
+    "debug": "ndb server.js"
   },
   "author": "Sagar Kumar",
   "license": "MIT",
@@ -14,7 +15,8 @@
     "express": "^4.18.2",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "validator": "^13.9.0"
   },
   "devDependencies": {
     "eslint": "^8.37.0",
