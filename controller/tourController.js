@@ -1,5 +1,6 @@
 const Tour = require('../model/tourModel');
 const APIFeatures = require('../utils/Apifeatures');
+const AppError = require('../utils/AppError');
 const { catchAsync } = require('../utils/catchAsync');
 // const AppError = require('../utils/AppError');
 
@@ -11,51 +12,6 @@ exports.aliasTopTour = (req, res, next) => {
 };
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
-  // 1A)Filter Data
-  // const queryObj = { ...req.query };
-  // const exculdedFields = ['page', 'sort', 'limit', 'fields'];
-  // exculdedFields.forEach((el) => delete queryObj[el]);
-
-  // let queryStr = JSON.stringify(queryObj);
-
-  // // 1B)Advace Filter Data
-  // queryStr = queryStr.replace(/\b(gte|gt|lt|lte)\b/, (match) => `$${match}`);
-
-  // let query = Tour.find(JSON.parse(queryStr));
-
-  // 2)Sorting Data
-  // if (req.query.sort) {
-  //   const sortBy = req.query.sort.split(',').join(' ');
-  //   query = query.sort(sortBy);
-  // } else {
-  //   query = query.sort('-createdAt');
-  // }
-  // 3)Field Limiting
-
-  // if (req.query.fields) {
-  //   const fields = req.query.fields.split(',').join(' ');
-  //   query = query.select(fields);
-  // } else {
-  //   query = query.select('-__v');
-  // }
-
-  // 4) Pagination
-
-  // const page = req.query.page * 1 || 1;
-  // const limit = req.query.limit * 1 || 100;
-  // const skip = (page - 1) * limit;
-
-  // query = query.skip(skip).limit(limit);
-
-  // if (req.query.page) {
-  //   const numTours = await Tour.countDocuments();
-  //   if (skip >= numTours) {
-  //     throw new Error('This Page Does Not Exist');
-  //   }
-  // }
-
-  // EXECUTE QUERY
-
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
     .sort()
@@ -73,6 +29,10 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    return next(new AppError('Tour Not Found ID is Invalid', 404));
+  }
   res.status(200).json({
     status: 'success',
     data: {
@@ -106,7 +66,10 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+  if (!tour) {
+    return next(new AppError('Tour Not Found ID is Invalid', 404));
+  }
 
   res.status(204).json({
     status: 'success',

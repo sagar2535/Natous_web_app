@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "NODE_ENV=development nodemon server.js",
-    "start:prod": "NODE_ENV=production nodemon sersaver.js",
+    "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js"
   },
   "author": "Sagar Kumar",
