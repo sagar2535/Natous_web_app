@@ -23,6 +23,6 @@ router.route('/monthly-plan/:year').get(getMonthlyPlan);
 
 router.route('/').get(protect, getAllTours).post(createTour);
 
-router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+router.route('/:id').get(getTour).patch(updateTour).delete(protect, deleteTour);
 
 module.exports = router;
