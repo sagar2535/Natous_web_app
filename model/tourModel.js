@@ -4,7 +4,7 @@ const slugify = require('slugify');
 // const User = require('./userModel');
 // const validator = require('validator');
 
-const tourShchema = new mongoose.Schema(
+const tourSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -120,58 +120,74 @@ const tourShchema = new mongoose.Schema(
   }
 );
 
-tourShchema.virtual('durationWeeks').get(function () {
+tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// Virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // DOCUMENT MIDDLEWARE : runs before .save  and .create COMMAND
 
-tourShchema.pre('save', function (next) {
+tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-// tourShchema.pre('save', async function (next) {
+// tourSchema.pre('save', async function (next) {
 //   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
 //   this.guides = await Promise.all(guidesPromises);
 //   next();
 // });
 
-// tourShchema.pre('save', (next) => {
+// tourSchema.pre('save', (next) => {
 //   console.log('Will save Document');
 //   next();
 // });
 
-// tourShchema.post('save', (doc, next) => {
+// tourSchema.post('save', (doc, next) => {
 //   console.log(doc);
 //   next();
 // });
 
 // QUERY MIDDLEWARE
 
-// tourShchema.pre('find', function (next) {
+// tourSchema.pre('find', function (next) {
 /*This Regular Expression works for all the methods with Starts with like : find ,
   findOne, findByIdAndDelete and findMyIdAndUpdate */
 
-tourShchema.pre(/^find/, function (next) {
+tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
-tourShchema.post(/^find/, function (doc, next) {
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v',
+  });
+  next();
+});
+
+tourSchema.post(/^find/, function (doc, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   // console.log(doc);
   next();
 });
 
 // AGGREGATE MIDDLEWARE
-tourShchema.pre('aggregate', function (next) {
+tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   console.log(this.pipeline());
 
   next();
 });
 
-const Tour = mongoose.model('Tour', tourShchema);
+const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
