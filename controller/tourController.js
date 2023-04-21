@@ -1,5 +1,5 @@
 const Tour = require('../model/tourModel');
-const { catchAsync } = require('../utils/catchAsync');
+const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/AppError');
 
@@ -23,11 +23,9 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        // _id: '$price',
-        // _id: '$ratingsAverage',
         _id: { $toUpper: '$difficulty' },
         numTours: { $sum: 1 },
-        numRatings: { $sum: '$ratingsAverage' },
+        numRatings: { $sum: '$ratingsQuantity' },
         avgRatings: { $avg: '$ratingsAverage' },
         avgPrice: { $avg: '$price' },
         minPrice: { $min: '$price' },
@@ -37,7 +35,6 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     {
       $sort: { avgPrice: 1 },
     },
-    // { $match: { _id: { $ne: 'EASY' } } },
   ]);
   res.status(200).json({
     status: 'success',
@@ -92,10 +89,10 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
 
 exports.getToursWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
 
   const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
 
-  const [lat, lng] = latlng.split(',');
   if (!lat || !lng) {
     return next(
       new AppError(

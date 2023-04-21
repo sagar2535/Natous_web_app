@@ -1,5 +1,5 @@
 const User = require('../model/userModel');
-const { catchAsync } = require('../utils/catchAsync');
+const catchAsync = require('../utils/catchAsync');
 
 const AppError = require('../utils/AppError');
 const factory = require('./handlerFactory');
@@ -25,7 +25,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
   const filterBody = filterObj(req.body, 'name', 'email');
-  const updatedUser = User.findByIdAndUpdate(req.body.id, filterBody, {
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
     new: true,
     runValidators: true,
   });
@@ -48,7 +48,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'This Route is not yet Defined please signup /signup instead',
+    message: 'This Route is not yet Defined please use /signup instead',
   });
 };
 exports.getAllUsers = factory.getAll(User);
