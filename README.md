@@ -2,8 +2,6 @@
 
 https://www.natours.dev/
 
-The project was created using `JavaScript`,`ExpressJS`, `NodeJS` and `MongoDB` for database
-
 This project is a tour-based web app built using `Node.js`, `Express.js`, and `MongoDB` with `Mongoose`. The app includes authorization and authentication features to ensure secure access to its features. In this documentation, you will find information on how to install and set up the project, the project structure, the API documentation, the database schema, the authentication and authorization process, and troubleshooting information.
 
 # Installation
