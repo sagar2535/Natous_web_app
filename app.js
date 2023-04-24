@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unpublished-require */
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const express = require('express');
@@ -8,7 +9,10 @@ const mongoSanitize = require('express-mongo-sanitize');
 const XSS = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
+const compression = require('compression');
+const cors = require('cors');
 const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controller/errorController');
 
@@ -16,15 +20,22 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controller/bookingController');
+
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
+app.enable('trust proxy');
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARE
+// Implement CORS
+app.use(cors());
 // Serving Static Files
+
+app.options('*', cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // SET Security HTTP Headers
@@ -42,7 +53,11 @@ const limiter = rateLimit({
   message: 'To many requests from this IP, Please Try Again later!',
 });
 app.use('/api', limiter);
-
+app.post(
+  '/webhook-checkout',
+  bodyParser.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 // BODY-PARSER reading DATA From the body into req.body
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -68,6 +83,7 @@ app.use(
   })
 );
 
+app.use(compression());
 // TEST MIDDLEWARE
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
