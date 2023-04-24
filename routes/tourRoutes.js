@@ -14,7 +14,7 @@ router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
-  .get(tourController.aliasTopTours, tourController.getAllTours);
+  .get(tourController.aliasTopTour, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
 router
